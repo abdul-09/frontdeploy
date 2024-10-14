@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthActions } from "@/app/auth/utils";
 import { useSearchParams, useRouter } from "next/navigation";
+
 type FormData = {
   password: string;
 };
@@ -25,10 +26,8 @@ const ResetPasswordConfirmation = () => {
   useEffect(() => {
     const extractedUid = searchParams.get("uid");
     let extractedToken = searchParams.get("token");
-    console.log("Extracted UID:", extractedUid);
-    console.log("Extracted Token:", extractedToken);
     if (extractedToken && extractedToken.endsWith("/")) {
-      extractedToken = extractedToken.slice(0, -1); 
+      extractedToken = extractedToken.slice(0, -1);
     }
 
     if (extractedUid && extractedToken) {
@@ -38,23 +37,16 @@ const ResetPasswordConfirmation = () => {
   }, [searchParams]);
 
   const onSubmit = async (data: FormData) => {
-    console.log("Submitting data:", { uid, token, new_password: data.password, re_new_password: data.password });
     try {
-      
-      await resetPasswordConfirm(
-        uid,
-        token,
-        data.password,
-        data.password,
-      ).res();
+      await resetPasswordConfirm(uid, token, data.password, data.password).res();
       alert("Password has been reset successfully.");
       router.push("/");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      console.log(err)
+      console.log(err);
       alert("Failed to reset password. Please try again.");
     }
   };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg w-1/3">
@@ -83,4 +75,11 @@ const ResetPasswordConfirmation = () => {
   );
 };
 
-export default ResetPasswordConfirmation;
+// Use Suspense boundary around the component to handle CSR
+const SuspenseWrapper = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ResetPasswordConfirmation />
+  </Suspense>
+);
+
+export default SuspenseWrapper;
