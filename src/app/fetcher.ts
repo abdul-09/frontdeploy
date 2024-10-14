@@ -1,5 +1,6 @@
 import wretch, { Wretch, WretchError } from "wretch";
-import { AuthActions } from "@/app/(auth)/utils";
+import { AuthActions } from "@/app/auth/utils";
+
 
 // Extract necessary functions from the AuthActions utility.
 const { handleJWTRefresh, storeToken, getToken } = AuthActions();
